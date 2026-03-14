@@ -1,0 +1,36 @@
+body{
+    margin: 0;
+    padding: 0;
+}
+.container{
+    margin-top: 5%;
+    margin-left: auto;
+    margin-right: auto;
+    min-width: 600px;
+    min-height: 200px;
+    background-color: white;
+    box-shadow: 0 0 5px black;
+    box-sizing: border-box;
+    padding: 0;
+}
+.nawBar{
+    box-sizing: border-box;
+    height: 50px;
+}
+.nawBar a {
+    padding: 10px;
+    height: 30px;
+    font-weight: bold;
+    text-decoration: none;
+    color: black;
+    border: 1px solid gray;
+    background-color: lightgray;
+    border-radius: 4px;
+    line-height: 50px;
+    transition: all 0.3s ease;
+    margin-left: 5px;
+}
+.nawBar a:hover{
+    box-shadow: 0 0 4px black;
+    background-color: lightblue;
+}

@@ -1,0 +1,40 @@
+{% extends 'layout.html' %}
+
+{% block title %} {{title}} {% endblock %}
+
+{% block container %}
+
+    <h1 class="text-center">{{ title }}</h1>
+    
+    <!-- form to add new account -->
+    <div class="row border p-4">
+        <form action="/edite-record/{{credential.id}}" method="post">
+            <div class="row mb-4">
+                <div class="col-4">
+                    <input id="user-email" class="form-control" type="email" placeholder="email" name="email" value="{{credential.email}}">
+                </div>
+                <div class="col-3">
+                    <input id="user-account" class="form-control" type="text" placeholder="account" name="account" value="{{credential.account}}">
+                </div>
+                <div class="col-5">
+                    <textarea id="user-password" class="form-control" placeholder="pasword" type="text" name="password" name="password" >{{credential.pasword}}</textarea>
+                </div>
+            <button class="btn btn-primary col-1 mt-4" type="submit">Update</button>
+        </form>
+
+
+
+
+        <!-- box for generating passwords -->
+        <div class="row mt-4">
+            <div class="col-2">
+                <input id="passwordLength" class="form-control" type="text" placeholder="password lenght">
+            </div>
+            <div class="col-2">
+                <button type="button" id="generatePassword" class="btn btn-success">Generate password</button>
+            </div>
+        </div>
+
+    </div>
+
+{% endblock %}

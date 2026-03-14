@@ -1,0 +1,39 @@
+{% extends 'layout.html' %}
+
+{% block title %} {{title}} {% endblock %}
+
+{% block container %}
+
+    <h1 class="text-center">{{ title }}</h1>
+    
+    <!-- form to add new account -->
+    <div class="row border p-4">
+        <form action="/add-credenials" method="post">
+            <div class="row mb-4">
+                <div class="col-4">
+                    <input id="user-email" class="form-control" type="email" placeholder="enter email" name="email">
+                </div>
+                <div class="col-3">
+                    <input id="user-account" class="form-control" type="text" placeholder="account name" name="account">
+                </div>
+                <div class="col-5">
+                    <textarea id="user-password" class="form-control" type="text" name="password" placeholder="generate strong password or enter your" name="password"></textarea>
+                </div>
+            </div>
+            <button class="btn btn-primary" type="submit">Create</button>
+        </form>
+
+
+        <!-- box for generating passwords -->
+        <div class="row mt-4">
+            <div class="col-2">
+                <input id="passwordLength" class="form-control" type="text" placeholder="password's length">
+            </div>
+            <div class="col-2">
+                <button id="generatePassword" class="btn btn-success">Generate password</button>
+            </div>
+        </div>
+
+    </div>
+
+{% endblock %}
