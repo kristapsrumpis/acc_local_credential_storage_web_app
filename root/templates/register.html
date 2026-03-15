@@ -1,0 +1,29 @@
+{% extends 'layout.html' %}
+
+{% block title %} {{title}} {% endblock %}
+
+{% block container %}
+    <div class="row justify-content-center">
+        <div class="col-6 p-4">
+            <div class="row "><h2 class="text-center">{{title}}</h2></div>
+            <div class="row">
+                <form class="col align-self-center" action="#" method="post">
+                    <div class="mb-3">
+                      <label for="Email1" class="form-label">Email address</label>
+                      <input type="email" class="form-control" id="Email1" aria-describedby="emailHelp" name="email">
+                    </div>
+                    <div class="mb-3">
+                      <label for="Password1" class="form-label">Password</label>
+                      <input type="password" class="form-control" id="Password1" name="password1">
+                    </div>
+                     <div class="mb-3">
+                      <label for="Password1" class="form-label">Confirm Password</label>
+                      <input type="password" class="form-control" id="Password1" name="password2">
+                    </div>
+                    <button type="submit" class="btn btn-primary">Login</button>
+
+                </form>
+            </div>
+        </div>
+    </div>
+{% endblock %}
