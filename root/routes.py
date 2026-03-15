@@ -49,4 +49,10 @@ def edite_record(id):
         return redirect('/')
     
     return render_template('edite.html', title=title, credential=credential)
+
+
+@home_bp.route('/login', methods=['GET', 'POST'])
+def loging():
+    title = "Log In"
+    return render_template('login.html', title=title)
    
