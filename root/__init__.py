@@ -13,8 +13,8 @@ app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
 db = SQLAlchemy()
 
 # initialize flask login menager
-login_menager = LoginManager(app)
-login_menager.login_view = "login"
+login_manager = LoginManager(app)
+login_manager.login_view = 'login'
 
 
 # importe routes
