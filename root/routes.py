@@ -1,7 +1,7 @@
 from flask import Blueprint, redirect, render_template, request, url_for
 
 from root import db
-from root.modules import accountCredentials
+from root.modules import AccountCredentials
 
 home_bp = Blueprint("home", __name__)
 
