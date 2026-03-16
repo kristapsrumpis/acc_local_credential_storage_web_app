@@ -20,7 +20,7 @@ def add_credentials():
         email = request.form["email"]
         account = request.form["account"]
         password = request.form["password"]
-        accCredentials = accountCredentials(email=email,  account=account,  pasword=password)
+        accCredentials = accountCredentials(email=email,  account=account,  password=password)
 
         db.session.add(accCredentials)
         db.session.commit()
@@ -47,7 +47,7 @@ def edite_record(id):
     if request.method == "POST":
         credential.mail = request.form["email"]
         credential.account = request.form["account"]
-        credential.pasword = request.form["password"]
+        credential.password = request.form["password"]
         db.session.commit()
         return redirect("/")
 
