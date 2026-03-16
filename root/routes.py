@@ -9,7 +9,7 @@ home_bp = Blueprint("home", __name__)
 @home_bp.route("/", methods=["GET"])
 def home():
     title = "ACC Credentials"
-    data = accountCredentials.query.all()
+    data = AccountCredentials.query.all()
     return render_template("home.html", title=title, data=data)
 
 
@@ -20,9 +20,9 @@ def add_credentials():
         email = request.form["email"]
         account = request.form["account"]
         password = request.form["password"]
-        accCredentials = accountCredentials(email=email,  account=account,  password=password)
+        AccCredentials = accountCredentials(email=email,  account=account,  password=password)
 
-        db.session.add(accCredentials)
+        db.session.add(AccCredentials)
         db.session.commit()
         return redirect("/")
     else:
@@ -32,7 +32,7 @@ def add_credentials():
 @home_bp.route("/delete-record/<int:id>", methods=["POST"])
 def delete_record(id):
     if request.method == "POST":
-        credential = accountCredentials.query.get_or_404(id)
+        credential = AccountCredentials.query.get_or_404(id)
         db.session.delete(credential)
         db.session.commit()
         return redirect("/")
@@ -43,7 +43,7 @@ def delete_record(id):
 @home_bp.route("/edite-record/<int:id>", methods=["GET", "POST"])
 def edite_record(id):
     title = "EDITE RECORD"
-    credential = accountCredentials.query.get_or_404(id)
+    credential = AccountCredentials.query.get_or_404(id)
     if request.method == "POST":
         credential.mail = request.form["email"]
         credential.account = request.form["account"]
