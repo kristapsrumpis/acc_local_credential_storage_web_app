@@ -1,7 +1,7 @@
 from flask import Blueprint, redirect, render_template, request, url_for
 
 from root import db
-from root.modules import AccountCredentials
+from root.models import AccountCredentials
 
 home_bp = Blueprint("home", __name__)
 
@@ -62,3 +62,14 @@ def loging():
         password1 = request.form.get('password1')
         print(email,password1)
     return render_template("login.html", title=title)
+
+
+@home_bp.route("/register", methods=["GET", "POST"])
+def register():
+    title = "Register"
+    if request.method == "POST":
+        email = request.form.get("email")
+        password1 = request.form.get("password1")
+        password2 = request.form.get("password2")
+        print(email, password1, password2)
+    return render_template("register.html", title=title)

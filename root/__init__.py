@@ -13,11 +13,11 @@ db = SQLAlchemy()
 
 # initialize flask login menager
 login_manager = LoginManager(app)
-login_manager.login_view = "login"  
+login_manager.login_view = "login"  # ignore type:
 
 
 # importe routes
-from root.routes import home_bp  
+from root.routes import home_bp
 
 # register routes
 app.register_blueprint(home_bp)
@@ -31,6 +31,7 @@ migrate = Migrate(app, db)
 
 
 # import user model from models for user loader function\
+from root.models import User
 
 # user loader function
 @login_manager.user_loader
