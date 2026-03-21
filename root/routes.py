@@ -25,7 +25,7 @@ def add_credentials():
 
         db.session.add(AccCredentials)
         db.session.commit()
-        return redirect(url_for("home_bp.home"))
+        return redirect(url_for("home.home"))
     else:
         return render_template("add-account.html", title=title)
 
@@ -36,9 +36,9 @@ def delete_record(id):
         credential = AccountCredentials.query.get_or_404(id)
         db.session.delete(credential)
         db.session.commit()
-        return redirect(url_for("home_bp.home"))
+        return redirect(url_for("home.home"))
     else:
-        return redirect(url_for("home_bp.home"))
+        return redirect(url_for("home.home"))
 
 
 @home_bp.route("/edite-record/<int:id>", methods=["GET", "POST"])
@@ -50,7 +50,7 @@ def edite_record(id):
         credential.account = request.form["account"]
         credential.password = request.form["password"]
         db.session.commit()
-        return redirect(url_for("home_bp.home"))
+        return redirect(url_for("home.home"))
 
     return render_template("edite.html", title=title, credential=credential)
 
@@ -81,19 +81,19 @@ def register():
                 flash("Pasdword not provaded", "danger")
             if not password2:
                 flash("Password confirmation not provaded", "danger")
-            return redirect(url_for("home_bp.register"))
+            return redirect(url_for("home.register"))
 
 
         # chek if email is not existing alredy in db 
         if User.query.get(email):
             flash("Email alredy is taken! chouse different!", 'danger')
-            return redirect(url_for("home_bp.register"))
+            return redirect(url_for("home.register"))
 
 
         # calidate if password1 and pasword2 maches
         if not password1 == password2:
             flash("Password no mach", "danger")
-            return redirect(url_for("home_bp.register"))
+            return redirect(url_for("home.register"))
 
         
         # hash password
@@ -102,9 +102,9 @@ def register():
         # Add user to db
         user = User(email=email, password_hash=password_hash)
         db.session.add(user)
-        db.commit()
+        db.session.commit()
         flash("Account ssuccesfuly created", "success")
-        return redirect(url_for("home_bp.login"))
+        return redirect(url_for("home.login"))
 
         
 
