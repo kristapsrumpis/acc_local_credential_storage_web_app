@@ -9,7 +9,21 @@
 </head>
 <body>
     <div class="container">
+        <!-- naw bar -->
         {% include 'naw.html' %}
+
+        <!-- flsh messages -->
+        {% with messages = get_flashed_messages(with_categories=true) %}
+            {% if messages %}
+                <div class="alert" role="alert">
+                    {% for category, message in messages %}
+                        <div class="alert alert-{{ category }}">{{ message }}</div>
+                    {% endfor %}
+                </div>
+            {% endif %}
+        {% endwith %}
+        
+        <!-- container block -->
         {% block container %}{% endblock %}
     </div>
     

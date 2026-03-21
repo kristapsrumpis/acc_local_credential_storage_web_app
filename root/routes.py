@@ -1,7 +1,8 @@
-from flask import Blueprint, redirect, render_template, request, url_for
+from flask import Blueprint, redirect, render_template, request, url_for, flash
+from werkzeug.security import generate_password_hash, check_password_hash
 
 from root import db
-from root.models import AccountCredentials
+from root.models import AccountCredentials, User
 
 home_bp = Blueprint("home", __name__)
 
@@ -24,7 +25,7 @@ def add_credentials():
 
         db.session.add(AccCredentials)
         db.session.commit()
-        return redirect("/")
+        return redirect(url_for("home_bp.home"))
     else:
         return render_template("add-account.html", title=title)
 
@@ -35,9 +36,9 @@ def delete_record(id):
         credential = AccountCredentials.query.get_or_404(id)
         db.session.delete(credential)
         db.session.commit()
-        return redirect("/")
+        return redirect(url_for("home_bp.home"))
     else:
-        return redirect("/")
+        return redirect(url_for("home_bp.home"))
 
 
 @home_bp.route("/edite-record/<int:id>", methods=["GET", "POST"])
@@ -49,7 +50,7 @@ def edite_record(id):
         credential.account = request.form["account"]
         credential.password = request.form["password"]
         db.session.commit()
-        return redirect("/")
+        return redirect(url_for("home_bp.home"))
 
     return render_template("edite.html", title=title, credential=credential)
 
@@ -71,5 +72,40 @@ def register():
         email = request.form.get("email")
         password1 = request.form.get("password1")
         password2 = request.form.get("password2")
-        print(email, password1, password2)
+        
+        # validate if user input exist
+        if not email or not password1 or not password2:
+            if not email:
+                flash("Email not provaded", "danger")
+            if not password1:
+                flash("Pasdword not provaded", "danger")
+            if not password2:
+                flash("Password confirmation not provaded", "danger")
+            return redirect(url_for("home_bp.register"))
+
+
+        # chek if email is not existing alredy in db 
+        if User.query.get(email):
+            flash("Email alredy is taken! chouse different!", 'danger')
+            return redirect(url_for("home_bp.register"))
+
+
+        # calidate if password1 and pasword2 maches
+        if not password1 == password2:
+            flash("Password no mach", "danger")
+            return redirect(url_for("home_bp.register"))
+
+        
+        # hash password
+        password_hash = generate_password_hash(password1, method="pbkdf2:sha256")
+        
+        # Add user to db
+        user = User(email=email, password_hash=password_hash)
+        db.session.add(user)
+        db.commit()
+        flash("Account ssuccesfuly created", "success")
+        return redirect(url_for("home_bp.login"))
+
+        
+
     return render_template("register.html", title=title)
