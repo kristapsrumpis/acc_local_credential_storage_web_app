@@ -56,7 +56,7 @@ def edite_record(id):
 
 
 @home_bp.route("/login", methods=["GET", "POST"])
-def loging():
+def login():
     title = "Log In"
     if request.method == "POST":
         email = request.form.get('email')
@@ -85,14 +85,14 @@ def register():
 
 
         # chek if email is not existing alredy in db 
-        if User.query.get(email):
+        if User.query.filter_by(email=email).first():
             flash("Email alredy is taken! chouse different!", 'danger')
             return redirect(url_for("home.register"))
 
 
         # calidate if password1 and pasword2 maches
-        if not password1 == password2:
-            flash("Password no mach", "danger")
+        if password1 != password2:
+            flash("Passwords do not match", "danger")
             return redirect(url_for("home.register"))
 
         
@@ -107,5 +107,4 @@ def register():
         return redirect(url_for("home.login"))
 
         
-
     return render_template("register.html", title=title)
