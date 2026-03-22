@@ -1,5 +1,6 @@
 from flask import Blueprint, redirect, render_template, request, url_for, flash
 from werkzeug.security import generate_password_hash, check_password_hash
+from flask_login import login_user, login_required, logout_user
 
 from root import db
 from root.models import AccountCredentials, User
@@ -8,6 +9,7 @@ home_bp = Blueprint("home", __name__)
 
 
 @home_bp.route("/", methods=["GET"])
+@login_required
 def home():
     title = "ACC Credentials"
     data = AccountCredentials.query.all()
@@ -15,6 +17,7 @@ def home():
 
 
 @home_bp.route("/add-credenials", methods=["POST", "GET"])
+@login_required
 def add_credentials():
     title = "ADD Credentials"
     if request.method == "POST":
@@ -31,6 +34,7 @@ def add_credentials():
 
 
 @home_bp.route("/delete-record/<int:id>", methods=["POST"])
+@login_required
 def delete_record(id):
     if request.method == "POST":
         credential = AccountCredentials.query.get_or_404(id)
@@ -42,6 +46,7 @@ def delete_record(id):
 
 
 @home_bp.route("/edite-record/<int:id>", methods=["GET", "POST"])
+@login_required
 def edite_record(id):
     title = "EDITE RECORD"
     credential = AccountCredentials.query.get_or_404(id)
@@ -61,7 +66,37 @@ def login():
     if request.method == "POST":
         email = request.form.get('email')
         password1 = request.form.get('password1')
-        print(email,password1)
+
+
+        # validate form input to prevent emty
+        if not email or not password1:
+            if not email:
+                flash("Missing email", "danger")
+            if not password1:
+                flash("Missing password", "danger")
+            return redirect(url_for("home.login"))
+
+
+        # cheks if user exist
+        user = User.query.filter_by(email=email).first()
+        if not user:
+            flash("Uses do not exist!", "danger")
+            return redirect(url_for("home.login"))
+
+
+        # validate password
+        if not check_password_hash(user.password_hash, password1):
+            flash("Incorrect password", "danger")
+            return redirect(url_for("home.login"))
+
+
+        # login succesful
+        del user.password_hash
+        login_user(user)
+        flash("Logged in successfully", "success")
+        return redirect(url_for("home.home"))
+
+        
     return render_template("login.html", title=title)
 
 
@@ -73,7 +108,7 @@ def register():
         password1 = request.form.get("password1")
         password2 = request.form.get("password2")
         
-        
+
         # validate if user input exist
         if not email or not password1 or not password2:
             if not email:
@@ -110,3 +145,11 @@ def register():
 
         
     return render_template("register.html", title=title)
+
+
+@home_bp.route("/logout")
+@login_required
+def logout():
+    logout_user()
+    flash("Logged out", "success")
+    return redirect(url_for("home.login"))

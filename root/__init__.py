@@ -14,7 +14,7 @@ db = SQLAlchemy()
 
 # initialize flask login menager
 login_manager = LoginManager(app)
-login_manager.login_view = "login"  # ignore type:
+login_manager.login_view = "home.login"  
 
 
 # importe routes
