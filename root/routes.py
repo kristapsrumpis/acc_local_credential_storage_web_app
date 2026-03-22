@@ -11,7 +11,8 @@ home_bp = Blueprint("home", __name__)
 @login_required
 def home():
     title = "ACC Credentials"
-    data = AccountCredentials.query.all()
+    data = AccountCredentials.query.filter_by(user_id=current_user.id).all()
+
     return render_template("home.html", title=title, data=data)
 
 
@@ -23,7 +24,7 @@ def add_credentials():
         email = request.form["email"]
         account = request.form["account"]
         password = request.form["password"]
-        AccCredentials = accountCredentials(email=email,  account=account,  password=password)
+        AccCredentials = accountCredentials(email=email,  account=account,  password=password, user_id=current_user.id)
 
         db.session.add(AccCredentials)
         db.session.commit()
