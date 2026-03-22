@@ -73,6 +73,7 @@ def register():
         password1 = request.form.get("password1")
         password2 = request.form.get("password2")
         
+        
         # validate if user input exist
         if not email or not password1 or not password2:
             if not email:
@@ -99,6 +100,7 @@ def register():
         # hash password
         password_hash = generate_password_hash(password1, method="pbkdf2:sha256")
         
+
         # Add user to db
         user = User(email=email, password_hash=password_hash)
         db.session.add(user)
