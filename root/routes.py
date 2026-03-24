@@ -24,7 +24,7 @@ def add_credentials():
         email = request.form["email"]
         account = request.form["account"]
         password = request.form["password"]
-        AccCredentials = accountCredentials(email=email,  account=account,  password=password, user_id=current_user.id)
+        AccCredentials = AccountCredentials(email=email,  account=account,  password=password, user_id=current_user.id)
 
         db.session.add(AccCredentials)
         db.session.commit()
