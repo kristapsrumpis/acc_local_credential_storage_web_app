@@ -11,9 +11,4 @@ class Encription:
         self.key = base64.urlsafe_b64encode(raw_key)
         self.f = Fernet(self.key)
 
-    def encrypt(self, text:str):
-        return self.f.encrypt(text.encode())
-
-    def decrypt(self, token: bytes):
-        return self.f.decrypt(token).decode()
         

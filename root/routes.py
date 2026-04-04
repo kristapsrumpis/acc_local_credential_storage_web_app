@@ -1,8 +1,11 @@
-from flask import Blueprint, redirect, render_template, request, url_for, flash
+from flask import Blueprint, redirect, render_template, request, url_for, flash, session
 from werkzeug.security import generate_password_hash, check_password_hash
 from flask_login import login_user, login_required, logout_user, current_user
 from root import db
 from root.models import AccountCredentials, User
+from root.encryption import Encription
+from cryptography.fernet import Fernet
+
 
 home_bp = Blueprint("home", __name__)
 
@@ -11,7 +14,18 @@ home_bp = Blueprint("home", __name__)
 @login_required
 def home():
     title = "ACC Credentials"
+    key = session.get("fernet_key")
+    if not key:
+        flash("Session expired. Please log in again.", "warning")
+        return redirect(url_for("home.login"))
+    f = Fernet(key.encode())
+
     data = AccountCredentials.query.filter_by(user_id=current_user.id).all()
+    for item in data:
+        try:
+            item.password = f.decrypt(item.password).decode()
+        except Exception:
+            item.password = "[DECRYPTION FAILED]"
 
     return render_template("home.html", title=title, data=data)
 
@@ -24,7 +38,12 @@ def add_credentials():
         email = request.form["email"]
         account = request.form["account"]
         password = request.form["password"]
-        AccCredentials = AccountCredentials(email=email,  account=account,  password=password, user_id=current_user.id)
+
+        key = session.get("fernet_key")
+        enc = Fernet(key.encode())
+        enc_password = enc.encrypt(password.encode())
+
+        AccCredentials = AccountCredentials(email=email,  account=account,  password=enc_password, user_id=current_user.id)
 
         db.session.add(AccCredentials)
         db.session.commit()
@@ -49,11 +68,19 @@ def delete_record(id):
 @login_required
 def edite_record(id):
     title = "EDITE RECORD"
+    key = session.get("fernet_key")
+    if not key:
+        flash("Session expired. Please log in again.", "warning")
+        return redirect(url_for("home.login"))
+    f = Fernet(key.encode())
+
     credential = AccountCredentials.query.get_or_404(id)
+    credential.password = f.decrypt(credential.password).decode()
+
     if request.method == "POST":
         credential.mail = request.form["email"]
         credential.account = request.form["account"]
-        credential.password = request.form["password"]
+        credential.password = f.encrypt(request.form["password"].encode())
         db.session.commit()
         return redirect(url_for("home.home"))
 
@@ -91,8 +118,10 @@ def login():
 
 
         # login succesful
+        enc = Encription(password1)
         del user.password_hash
         login_user(user)
+        session["fernet_key"] = enc.key.decode()
         flash("Logged in successfully", "success")
         return redirect(url_for("home.home"))
 
@@ -151,5 +180,6 @@ def register():
 @login_required
 def logout():
     logout_user()
+    session.clear() 
     flash("Logged out", "success")
     return redirect(url_for("home.login"))
