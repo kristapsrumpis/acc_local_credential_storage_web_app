@@ -141,11 +141,11 @@ def register():
         # validate if user input exist
         if not email or not password1 or not password2:
             if not email:
-                flash("Email not provaded", "danger")
+                flash("Email not provided", "danger")
             if not password1:
-                flash("Pasdword not provaded", "danger")
+                flash("Pasdword not provided", "danger")
             if not password2:
-                flash("Password confirmation not provaded", "danger")
+                flash("Password confirmation not provided", "danger")
             return redirect(url_for("home.register"))
 
 
@@ -183,3 +183,34 @@ def logout():
     session.clear() 
     flash("Logged out", "success")
     return redirect(url_for("home.login"))
+
+
+@home_bp.route("/account/<int:id>", methods=["GET", "POST"])
+@login_required
+def account(id):
+    title = "Account"
+    user = User.query.get(id)
+    if not user:
+        flash("Uses do not exist!", "danger")
+        return redirect(url_for("home.login"))
+
+    if request.method == "POST":
+        email = request.form.get('email')
+        if not email:
+           flash("Email not provided", "danger")
+           return redirect(url_for('home.account', id=user.id))
+        try:
+            user.email = email
+            db.session.commit()
+            flash("Account Updated succesfuly", 'success')
+        except Encription as err:
+            print(err)
+            flash("Update Account Failled!", 'danger')
+            return redirect(url_for('home.account', id=user.id))
+
+        return redirect(url_for('home.home'))
+
+    return render_template("edite-account.html", title=title, user=user)
+
+
+    
