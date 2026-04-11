@@ -39,7 +39,7 @@
                 </div>
                 <div class="modal-body">
                     <div class="row p-4 m-4">
-                        <form action="#" method="post">
+                        <form action="{{ url_for('home.change_password', id=user.id) }}" method="post">
                             <div class="row mb-4">
                                 <div class="col">
                                     <input id="user-password" class="form-control" type="password" placeholder="Old Password" name="passwordOld" value="" required>

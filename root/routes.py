@@ -213,4 +213,70 @@ def account(id):
     return render_template("edite-account.html", title=title, user=user)
 
 
+@home_bp.route("/account/change-password/<int:id>", methods=['POST'])
+@login_required
+def change_password(id):
+    if request.method == "POST":
+        password_old = request.form.get('passwordOld')
+        password_new = request.form.get('passwordNew')
+        password_confirm = request.form.get('passwordConfirm')
+
+        if not password_old or not password_new or not password_confirm:
+            if not password_old:
+                flash('Old password is incorrect', 'danger')
+            if not password_new:
+                flash('New password is provided', 'danger')
+            if not password_confirm:
+                flash('Password confirm is not provided', 'danger')
+            return redirect(url_for('home.account', id=id))
+
+        if password_new != password_confirm:
+            flash('Password confirmation no mach new password', 'danger')
+            return redirect(url_for('home.account', id=id))
+
+        if not id:
+            flash("Faill changing password", 'danger')
+            return redirect(url_for('home.home'))
+
+        user = User.query.get(id)
+        if not user:
+            flash('No user found!', 'danger')
+            return redirect(url_for('home.home'))
+
+        if not check_password_hash(password_old, user.password_hash):
+            flash('Old password is incorrect', 'danger')
+            return redirect(url_for('home.home'))
+
+        key = session.get("fernet_key")
+        if not key:
+            flash('Faill changing password', 'danger')
+            return redirect(url_for('home.home'))
+
+        enc = Fernet(key.encode())
+        new_key = Encription()
+        enc_new = Fernet(new_key.encode())
+
+        data = AccountCredentials.query.filter_by(user_id=current_user.id).all()
+        try:
+            user.password_hash = generate_password_hash(password_new, method="pbkdf2:sha256")
+            for item in data:
+                try:
+                    item.password = enc_new.encrypt(enc.decrypt(item.password))
+                except Exception as e:
+                   print("Decrypt error:", e)
+
+            db.session.commit()
+            session["fernet_key"] = enc_new.key.decode()
+
+            flash("Password changed successfully", "success")
+            return redirect(url_for('home.account', id=id))
+            
+        except Exception as e:
+            print(e)
+            flash("Failled change password", 'danger')
+            return redirect(url_for('home.home'))
+    
+    return redirect(url_for('home.home'))
+
+
     
